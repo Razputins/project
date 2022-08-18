@@ -7,7 +7,7 @@ services:
   web:
     image: nginx:latest
     ports:
-      - "8080:80"
+      - "2380:80"
     volumes:
       - ./app:/var/www/html
       - ./conf/nginx/site.conf:/etc/nginx/conf.d/site.conf

@@ -9,7 +9,7 @@
 		public $table = 'request';
 
 		public function select(){
-			$query = $this->db->query("SELECT COUNT(*) as over, (SELECT COUNT(*) FROM {$this->table} WHERE JSON_EXTRACT(header, '$.new') = 1) AS al  FROM {$this->table}");
+			$query = $this->db->query("SELECT COUNT(*) as over, SUM(CASE WHEN JSON_EXTRACT(header, '$.new') = 1 THEN 1 ELSE 0 END) AS new FROM {$this->table}");
 			return $query->fetch(\PDO::FETCH_ASSOC);
 		}
 

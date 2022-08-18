@@ -18,7 +18,7 @@
 			$this->connect = new AMQPStreamConnection($params['host'], $params['port'], $params['username'], $params['password']);
 		}
 
-		public function add($str){
+		public function addTask($str){
 			$channel = $this->connect->channel();
 			$msg = new AMQPMessage($str, array('application_headers' => new AMQPTable([
 				'repeat' => 0,
@@ -28,7 +28,7 @@
 			$channel->close();
 		}
 
-		public function repeat($str){
+		public function addRepeat($str){
 			$channel = $this->connect->channel();
 			$msg = new AMQPMessage($str, array('application_headers' => new AMQPTable([
 				'repeat' => 1,
