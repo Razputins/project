@@ -1,0 +1,25 @@
+#!/usr/bin/php
+<?php
+	require_once 'core/autoload.php';
+	require_once 'config/config_docker.php';
+
+	use classes\Console;
+	use classes\Settings;
+
+	Settings::set($params);
+
+	$parsed_args = array();
+	for ($i = 1; $i < count($argv); $i++) {
+		if (preg_match('/^--?([^-=\s]+)=([^=\s]+)/', $argv[$i], $match)) {
+			$parsed_args[$match[1]] = $match[2];
+		}
+	}
+
+	if (isset($parsed_args['action'])) {
+		$action = $parsed_args['action'];
+		if (!method_exists(Console::class, $action)) {
+			throw new Exception('Method not exist');
+		}
+		$console = new Console();
+		$console->$action();
+	}

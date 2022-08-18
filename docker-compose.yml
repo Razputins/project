@@ -1,0 +1,72 @@
+version: '3'
+
+networks:
+  backend:
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./conf/nginx/site.conf:/etc/nginx/conf.d/site.conf
+    networks:
+      - backend
+
+  php:
+    container_name: php
+    build:
+      ./docker-files/php
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-5.7
+    restart: unless-stopped
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/logs:/var/log/mysql/
+      - ./mysql/dump:/dump
+    ports:
+      - "4307:3306"
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      MYSQL_DATABASE: project
+      MYSQL_ROOT_PASSWORD: secret
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "8081:80"
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./conf/rabbitmq/etc/:/etc/rabbitmq/
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
