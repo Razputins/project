@@ -1,4 +1,4 @@
-### Запуск docker-compose up
+### Запуск: docker-compose up
 
 
 ```
